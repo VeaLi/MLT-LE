@@ -9,3 +9,6 @@ The developed model has 2 inputs and 5 outputs, depending on the number of predi
 In this work, data from the BindingDB database containing records of experimental results on the binding strength of ligands to target proteins were used to train and test the model's ability to predict binding strength.
 
 The model proposed in this paper not only predicts various indicators of biological activity simultaneously, but is also capable of learning from the full amount of available data and filling in missing values during the learning and prediction process. According to the results, the use of a multi-task approach makes the developed model more suitable for evaluating *de novo* generative models and generated molecules. The model is also comparable in performance to benchmark models (DeepDTA, GraphDTA).
+
+
+![performance](vdr.png)
