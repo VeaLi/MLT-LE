@@ -11,4 +11,4 @@ In this work, data from the BindingDB database containing records of experimenta
 The model proposed in this paper not only predicts various indicators of biological activity simultaneously, but is also capable of learning from the full amount of available data and filling in missing values during the learning and prediction process. According to the results, the use of a multi-task approach makes the developed model more suitable for evaluating *de novo* generative models and generated molecules. The model is also comparable in performance to benchmark models (DeepDTA, GraphDTA).
 
 
-![performance](vdr.png)
+![performance](many-rankings.png)
