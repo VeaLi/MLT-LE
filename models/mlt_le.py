@@ -110,11 +110,12 @@ class MLTLE:
         self.model = model = tf.keras.models.load_model(
             'data/mltle/06-4.07.hdf5', custom_objects={'mse_nan': mse_nan, 'focal_loss': loss})
 
+
         self.target_columns = ['Ki (nM) log1p',
-                               'IC50 (nM) log1p',
-                               'Kd (nM) log1p',
-                               'EC50 (nM) log1p',
-                               'is_active']
+                                 'IC50 (nM) log1p',
+                                 'Kd (nM) log1p',
+                                 'EC50 (nM) log1p',
+                                 'is_active']
 
     def predict(self, data):
         for col in self.target_columns:
