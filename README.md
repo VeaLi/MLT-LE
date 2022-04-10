@@ -1,14 +1,48 @@
 # MLT-LE
- MLT-LE or Multi-Task Drug Target Affinity Prediction Model
+## MLT-LE or Multi-Task Drug Target Affinity Prediction Models
 
-MLT-LE is method for predicting the affinity of ligands to targets, which allows to cope with the noise in the raw data. It uses the multi-task learning paradigm.
+MLT-LE is a method for estimating binding strength for drug-target pair, which allows dealing with noise in raw data. It uses the paradigm of multi-task learning.
 
-Currently, there are a small number of models that use multi-task learning to solve the problem of predicting ligand-target binding strength. Two recently developed models, Multi-PLI (2021) and GanDTI (2021), emphasize the use of a multi-target approach to simultaneously solve classification and regression problems (joint-task learning), with different binding strength measures (Kd, Ki, IC50, EC50) separated in the learning process. In contrast, in this project, all measures of affinity (binding strength) are used simultaneously in training. This allows an order of magnitude more data to be used, which is especially important because some ligand-protein pairs are unevenly represented for different affinity measures.
+## Main requirements
 
-The developed model has 2 inputs and 5 outputs, depending on the number of predicted values. The model takes as input information about the structure of ligands and proteins in the form of text strings. The output is a prediction of five values for such pairs (ligand-protein) - different measures of affinity (Kd, Ki, IC50, EC50) and probability of belonging to a set of active structures.
-In this work, data from the BindingDB database containing records of experimental results on the binding strength of ligands to target proteins were used to train and test the model's ability to predict binding strength.
+- For *basic* models - TensorFlow only.
+- For others + TensorFlow Addons.
 
-The model proposed in this paper not only predicts various indicators of biological activity simultaneously, but is also capable of learning from the full amount of available data and filling in missing values during the learning and prediction process. According to the results, the use of a multi-task approach makes the developed model more suitable for evaluating *de novo* generative models and generated molecules. The model is also comparable in performance to benchmark models (DeepDTA, GraphDTA).
+If you have any troubles try to update TensorFlow.
+
+## Models
+
+Train size: ~ 733937 records
+Valid size: ~ 90610 records
+Test size: ~ 81549 records
+Tatal: ~906096 unique drug-target pairs
 
 
-![performance](many-rankings.png)
+| Model  | AUC on test|
+| ------ | ------ |
+| CNN basic | 89%|
+| CNN weights | |
+| BiLSTM basic |  |
+| BiLSTM weights |  |
+| CNN switching and weights |  |
+| BiLSTM switching and weights | |
+
+## Usage
+
+See corresponding Jupyter Notebook.
+## Performance
+### CNN basic
+![performance1](images/many-rankings.png)
+*Ranking comparison*
+![performance2](images/auc_cnn_basic.png)
+*AUC on test set*
+
+## About
+Currently, there are a small number of models that use multi-task learning to solve the problem of predicting ligand-target binding strength. Two recently developed models, Multi-PLI (2021) and GanDTI (2021), emphasize the use of a multi-target approach to simultaneously solve classification and regression problems (joint-task learning), separating different binding strength measures (Kd, Ki, IC50, EC50) in the learning process, not using auxiliary tasks, and not dealing with missing data. In contrast, in this project, all affinity measures (binding strength) are used simultaneously in training, as well as some auxiliary data, and missing values are masked. This allows an order of magnitude more data to be used, which is especially important since some ligand-protein pairs are unevenly represented for different affinity measures.
+
+For this work, data from the BindingDB database, which contains records of experimental results on the binding strength of ligands to target proteins, were used to train and test the model's ability to predict binding strength. The model takes as input information about the structure of ligands and proteins in the form of text strings, using simple approaches to represent them that do not require complex dependencies. The output is a prediction of five values for such pairs (ligand-protein) - various affinity measures (Kd, Ki, IC50, EC50) and estimation of the probability of belonging to a group of active structures, as well as a __number of various auxiliary tasks__ (pH, drug mass).
+
+The model proposed here not only predicts different indicators of binding strength simultaneously, but is also able to learn from the entire set of available data and fill in missing values during the learning and prediction process. According to the results, the use of such a multi-task approach makes the developed model suitable for the evaluation of *de novo* generative models and generated molecules. The model is also comparable in performance to benchmark models (GraphDTA library).
+
+## In addition
+In this work we use another log transformation ($$p1Kd = log(Kd+1)$$) which has no upper bound. Now we test whether this log transformation is better than the standard log transformation: $$pKd = -log10(Kd*1e-9 + 1e-10)$$. In any case, our transformation is reversible and all functions for the transformation from p1Kd to pKd are shown and available.
