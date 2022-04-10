@@ -33,11 +33,11 @@ See corresponding Jupyter Notebook.
 ### CNN basic
 
 
-| ![performance1](images/many-rankings.png | width=100) | 
+| ![performance1](images/many-rankings.png) | 
 |:--:| 
 | *Ranking comparison* |
 
-| ![performance2](images/auc_cnn_basic.png | width=100) | 
+| ![performance2](images/auc_cnn_basic.png) | 
 |:--:| 
 | *AUC on test set* |
 
