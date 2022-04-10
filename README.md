@@ -12,10 +12,10 @@ If you have any troubles try to update TensorFlow.
 
 ## Models
 
-Train size: ~ 733937 records
-Valid size: ~ 90610 records
-Test size: ~ 81549 records
-Tatal: ~906096 unique drug-target pairs
+Train size: ~ 733937 records<br/>
+Valid size: ~ 90610 records<br/>
+Test size: ~ 81549 records<br/>
+Tatal: ~906096 unique drug-target pairs<br/>
 
 | Model  | AUC on test|
 | ------ | ------ |
