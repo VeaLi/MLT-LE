@@ -145,7 +145,7 @@ class Gen:
 class MLTLE:
     def __init__(self, mse_nan=mse_nan, mse_nan_with_memory=mse_nan_with_memory):
         self.model = model = tf.keras.models.load_model(
-            'data/mltle/cnn_with_memory.hdf5', custom_objects={'mse_nan': mse_nan, 'mse_nan_with_memory': mse_nan_with_memory})
+            'data/mltle/cnn_with_memory.hdf5')
 
         self.target_columns = ['p1Kd', 'p1Ki',
                                'p1IC50', 'p1EC50', 'is_active', 'pH']
