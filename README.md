@@ -22,17 +22,17 @@ Tatal: ~906096 unique drug-target pairs <br/>
 
 
 Balance for each class: <br/>
-1.0 : 0.583% records<br/>
-0.0  : 0.416% records<br/>
+1.0 : 58.3% records<br/>
+0.0 : 41.6% records<br/>
 
-All basic CNN models are the same model with the same initialization, just trained differently on the same data. The total number of trainable parameters for this model is just 835,398.
+All basic CNN models are the same model with the same initialization, just trained differently on the same data. The total number of trainable parameters for this model is just 973,062.
 
 For 50 epochs:
 
 | Model                 | AUC on test | Kd CI | Ki CI | IC50 CI | EC50 CI | Total loss |
 | --------------------- | ----------- | ----- | ----- | ------- | ------- | ---------- |
 | CNN basic             | 89%         | 78.4  |  77.1 |  79.9   | 81.4    | 5.31       |
-| CNN basic with memory | 90%         | 79.9  |  78.3 |  80.8   | 82.2    | 4.80       |
+| CNN basic with memory | 91%         | 82.6  |  80.1 |  82.2   | 83.5    | 4.20       |
 | CNN weights           |             |       |       |         |         |            |
 
         
