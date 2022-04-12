@@ -3,6 +3,8 @@
 
 MLT-LE is a method for estimating binding strength for drug-target pair, which allows dealing with noise in raw data. It uses the paradigm of multi-task learning.
 
+Drug discovery involves assessing the binding strength between drugs and targets. Obtaining these data experimentally is time-consuming and expensive. Therefore, computational virtual screening methods for predicting binding strength are being widely developed. However, the experimental data used to train these prediction models are very inconsistent and unevenly represented for different drug-target pairs. This leads to biased algorithms that do not generalize well to new data. Therefore, approaches have begun to be developed to address this problem. One of them is the use of multitask learning. However, the extent of the application of this technique in this field is currently heavily undeveloped. The approach proposed in present work hopes to fill this gap. The work explores new possibilities that have not been considered before: using all available data from a single heterogeneous source (as opposed to several homogeneous ones), dealing with missing data, and adding auxiliary tasks to boost performance. In addition, this work suggests different type of data preparation as well as loss function adjustments and a comparison of different architectures for this task.
+
 ## Main requirements
 
 - For *basic* models - TensorFlow only.
@@ -21,10 +23,7 @@ Tatal: ~906096 unique drug-target pairs<br/>
 | ------ | ------ |
 | CNN basic | 89%|
 | CNN weights | |
-| BiLSTM basic |  |
-| BiLSTM weights |  |
-| CNN switching and weights |  |
-| BiLSTM switching and weights | |
+| CNN basic with memory | 90% |
 
 ## Usage
 
@@ -40,6 +39,10 @@ See corresponding Jupyter Notebook.
 | ![performance2](images/auc_cnn_basic.png) | 
 |:--:| 
 | *AUC on test set* |
+
+
+### CNN basic with memory
+
 
 ## About
 Currently, there are a small number of models that use multi-task learning to solve the problem of predicting ligand-target binding strength. Two recently developed models, Multi-PLI (2021) and GanDTI (2021), emphasize the use of a multi-target approach to simultaneously solve classification and regression problems (joint-task learning), separating different binding strength measures (Kd, Ki, IC50, EC50) in the learning process, not using auxiliary tasks, and not dealing with missing data. In contrast, in this project, all affinity measures (binding strength) are used simultaneously in training, as well as some auxiliary data, and missing values are masked. This allows an order of magnitude more data to be used, which is especially important since some ligand-protein pairs are unevenly represented for different affinity measures.
