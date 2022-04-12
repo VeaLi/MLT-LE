@@ -17,17 +17,33 @@ If you have any troubles try to update TensorFlow.
 Train size: ~ 733937 records<br/>
 Valid size: ~ 90610 records<br/>
 Test size: ~ 81549 records<br/>
-Tatal: ~906096 unique drug-target pairs<br/>
+Tatal: ~906096 unique drug-target pairs <br/>
 
-| Model  | AUC on test|
-| ------ | ------ |
-| CNN basic | 89%|
-| CNN weights | |
-| CNN basic with memory | 90% |
+
+
+Balance for each class: <br/>
+1.0 : 0.583% records<br/>
+0.0  : 0.416% records<br/>
+
+All basic CNN models are the same model with the same initialization, just trained differently on the same data. The total number of trainable parameters for this model is just 835,398.
+
+For 50 epochs:
+
+| Model                 | AUC on test | Kd CI | Ki CI | IC50 CI | EC50 CI | Total loss |
+| --------------------- | ----------- | ----- | ----- | ------- | ------- | ---------- |
+| CNN basic             | 89%         | 78.4  |  77.1 |  79.9   | 81.4    | 5.31       |
+| CNN basic with memory | 90%         | 79.9  |  78.3 |  80.8   | 82.2    | 4.80       |
+| CNN weights           |             |       |       |         |         |            |
+
+        
+
+
+
 
 ## Usage
 
 See corresponding Jupyter Notebook.
+
 ## Performance
 ### CNN basic
 
