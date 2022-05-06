@@ -12,9 +12,13 @@ class DataGen:
         [    Str,              Str,        Float,    Float,   ...  Float]
         ...
 
-    Target variables may be either Float and np.nan
+    Target variables can contain both Float and np.nan
         
     Expects any number of target variables >= 1.
+
+
+    It is necessary to pass the same number of columns for both train and test.
+    For the test, all target variables can be np.nan.
 
 
     Parameters
@@ -25,7 +29,9 @@ class DataGen:
         [    Str,              Str,        Float,    Float,   ...  Float]
         ...
 
-        Target variables may be either Float and np.nan
+        Target variables can contain both Float and np.nan
+            
+        Expects any number of target variables >= 1.
 
     map_drug: Dict[Str, List[int]]
         maps drug string to array of integers
@@ -36,6 +42,8 @@ class DataGen:
     shuffle: Bool, default=True
         shuffle data or not
 
+    test_only: Bool, default=False
+        sets target variables to 0
     """
     def __init__(self,
                  data,

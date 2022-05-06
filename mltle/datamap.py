@@ -32,7 +32,7 @@ class MapSeq:
 
     protein_mode: Str, default='protein_3'
         "protein_1" - map a protein string to a vector of integers, 
-        ngram=1, match every 3 characters, example: LLLSSS -> [3, 3, 3, 5, 5, 5],
+        ngram=1, match every 1 characters, example: LLLSSS -> [3, 3, 3, 5, 5, 5],
         see `mltle.data.maps.protein_1` for the map
 
         "protein_3" - map a protein string to a vector of integers, 
@@ -42,7 +42,7 @@ class MapSeq:
 
 
     max_drug_len: Int, default=200
-        shuffle data or not
+        Maximum length of the resulting integer vector for drug sequence
 
     """
     def __init__(self,

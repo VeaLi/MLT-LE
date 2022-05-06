@@ -1,5 +1,5 @@
 # MLT-LE
-## MLT-LE or Multi-Task Drug Target Affinity Prediction Models
+## Multi-Task Drug Target Affinity Prediction Model
 
 
 
@@ -16,24 +16,30 @@ Train, Dev, Test = 733937, 90610, 81549
 ## Install environment
 
 Install dependencies in environment
+
 `conda env create --file conda.yaml`
 
 Activate environment
+
 `source activate mltle`
 
 or
 
 Windows:
 Install dependencies in environment
+
 `conda env create --file conda.yaml`
 
 Activate environment
+
 `conda activate mltle`
 
 
 ## Usage
 
-### Define model
+### Training
+
+#### Define model
 ```python
 import mltle as mlt
 from collections import defaultdict
@@ -88,9 +94,9 @@ model = model.create_model(order=order,
 
 ```
 
-### Prepare data
+#### Prepare data
 
-#### Map strings to integers
+##### Map strings to integers
 
 - drug_mode:
     - "smiles_1" - map a drug SMILES string to a vector of integers, 
@@ -111,7 +117,7 @@ model = model.create_model(order=order,
 
 - protein_mode:
     -  "protein_1" - map a protein string to a vector of integers, 
-    ngram=1, match every 3 characters, example: LLLSSS -> [3, 3, 3, 5, 5, 5],
+    ngram=1, match every 1 characters, example: LLLSSS -> [3, 3, 3, 5, 5, 5],
     see `mltle.data.maps.protein_1` for the map
 
     -  "protein_3" - map a protein string to a vector of integers, 
@@ -128,7 +134,7 @@ drug_seqs, protein_seqs = data['smiles'].unique(), data['target'].unique()
 map_drug, map_protein = mapseq.create_maps(drug_seqs, protein_seqs)
 ```
 
-### Create generator
+#### Create generator
 
 ```python
 batch_size = 64

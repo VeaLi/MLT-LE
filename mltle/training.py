@@ -3,9 +3,6 @@ import numpy as np
 from keras import backend as K
 
 
-
-
-
 class LossWithMemoryCallback(tf.keras.callbacks.Callback):
     """
     This is loss helper.
