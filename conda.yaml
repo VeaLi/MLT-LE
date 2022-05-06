@@ -1,0 +1,12 @@
+name: mltle
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7.13
+  - pip:
+    - tensorflow
+    - scikit-plot
+    - lifelines
+    - scikit-learn
+    - rdkit-pypi
+    - tqdm

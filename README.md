@@ -1,71 +1,122 @@
 # MLT-LE
 ## MLT-LE or Multi-Task Drug Target Affinity Prediction Models
 
-MLT-LE is a method for estimating binding strength for drug-target pair, which allows dealing with noise in raw data. It uses the paradigm of multi-task learning.
-
-Drug discovery involves assessing the binding strength between drugs and targets. Obtaining these data experimentally is time-consuming and expensive. Therefore, computational virtual screening methods for predicting binding strength are being widely developed. However, the experimental data used to train these prediction models are very inconsistent and unevenly represented for different drug-target pairs. This leads to biased algorithms that do not generalize well to new data. Therefore, approaches have begun to be developed to address this problem. One of them is the use of multitask learning. However, the extent of the application of this technique in this field is currently heavily undeveloped. The approach proposed in present work hopes to fill this gap. The work explores new possibilities that have not been considered before: using all available data from a single heterogeneous source (as opposed to several homogeneous ones), dealing with missing data, and adding auxiliary tasks to boost performance. In addition, this work suggests different type of data preparation as well as loss function adjustments and a comparison of different architectures for this task.
-
-## Main requirements
-
-- For *basic* models - TensorFlow only.
-- For others + TensorFlow Addons.
-
-If you have any troubles try to update TensorFlow.
-
-## Models
-
-Train size: ~ 733937 records<br/>
-Valid size: ~ 90610 records<br/>
-Test size: ~ 81549 records<br/>
-Tatal: ~906096 unique drug-target pairs <br/>
 
 
-
-Balance for each class: <br/>
-1.0 : 58.3% records<br/>
-0.0 : 41.6% records<br/>
-
-All basic CNN models are the same model with the same initialization, just trained differently on the same data. The total number of trainable parameters for this model is just 973,062.
-
-For 50 epochs:
-
-| Model                 | AUC on test | Kd CI | Ki CI | IC50 CI | EC50 CI | Total loss |
-| --------------------- | ----------- | ----- | ----- | ------- | ------- | ---------- |
-| CNN basic             | 89%         | 78.4  |  77.1 |  79.9   | 81.4    | 5.31       |
-| CNN basic with memory | 91%         | 82.6  |  80.1 |  82.2   | 83.5    | 4.20       |
-| CNN weights           |             |       |       |         |         |            |
-
-        
+Train, Dev, Test = 733937, 90610, 81549
 
 
+| Num res. blocks| 1   | 5   | 10  | 15  |
+| -------------- | --- | --- | --- | --- |
+| Discount       |     |     |     |     |
+| -              |     |     |     |     |
+| 0.6            |     |     |     |     |
+
+
+## Install environment
+
+Install dependencies in environment
+`conda env create --file conda.yaml`
+
+Activate environment
+`source activate mltle`
+
+or
+
+Windows:
+Install dependencies in environment
+`conda env create --file conda.yaml`
+
+Activate environment
+`conda activate mltle`
 
 
 ## Usage
 
-See corresponding Jupyter Notebook.
+### Define model
+```python
+import mltle as mlt
+from collections import defaultdict
+import numpy as np
+from keras import backend as K
 
-## Performance
-### CNN basic
+import tensorflow as tf
 
+model = mlt.training.Model(drug_emb_size=64,
+              protein_emb_size=32,
+              max_drug_len=200,
+              drug_alphabet_len=53,
+              protein_alphabet_len=8006)
 
-| ![performance1](images/many-rankings.png) | 
-|:--:| 
-| *Ranking comparison* |
+order = ['p1Ki', 'p1IC50', 'p1Kd', 'p1EC50', 'is_active', 'pH', 'pSL']
+loss_weights = [1.0] * len(order)
 
-| ![performance2](images/auc_cnn_basic.png) | 
-|:--:| 
-| *AUC on test set* |
+variables = {}
+for var in order:
+    variables[var] = K.variable(0.0)
 
+LossCallback = mlt.training.LossWithMemoryCallback(variables, discount=0.6)
 
-### CNN basic with memory
+uselosses = defaultdict(lambda: mlt.training.mse_loss_wrapper)
+uselosses['is_active'] = 'binary_crossentropy'
 
+for k, v in variables.items():
+    if k not in uselosses.keys():
+        uselosses[k] = uselosses[k](v)
 
-## About
-Currently, there are a small number of models that use multi-task learning to solve the problem of predicting ligand-target binding strength. Two recently developed models, Multi-PLI (2021) and GanDTI (2021), emphasize the use of a multi-target approach to simultaneously solve classification and regression problems (joint-task learning), separating different binding strength measures (Kd, Ki, IC50, EC50) in the learning process, not using auxiliary tasks, and not dealing with missing data. In contrast, in this project, all affinity measures (binding strength) are used simultaneously in training, as well as some auxiliary data, and missing values are masked. This allows an order of magnitude more data to be used, which is especially important since some ligand-protein pairs are unevenly represented for different affinity measures.
+usemetrics = {'is_active': tf.keras.metrics.AUC()}
 
-For this work, data from the BindingDB database, which contains records of experimental results on the binding strength of ligands to target proteins, were used to train and test the model's ability to predict binding strength. The model takes as input information about the structure of ligands and proteins in the form of text strings, using simple approaches to represent them that do not require complex dependencies. The output is a prediction of five values for such pairs (ligand-protein) - various affinity measures (Kd, Ki, IC50, EC50) and estimation of the probability of belonging to a group of active structures, as well as a __number of various auxiliary tasks__ (pH, drug mass).
+activations = defaultdict(lambda: 'linear')
+activations['is_active'] = 'sigmoid'
 
-The model proposed here not only predicts different indicators of binding strength simultaneously, but is also able to learn from the entire set of available data and fill in missing values during the learning and prediction process. According to the results, the use of such a multi-task approach makes the developed model suitable for the evaluation of *de novo* generative models and generated molecules. The model is also comparable in performance to benchmark models (GraphDTA library).
+initializer = tf.keras.initializers.HeUniform(seed=7)
+optimizer = tf.keras.optimizers.Adadelta(learning_rate=1.0)
 
-## In addition
-In this work we use another log transformation (p1Kd = log(Kd+1)) which has no upper bound. Now we test whether this log transformation is better than the standard log transformation: pKd = -log10(Kd*1e-9 + 1e-10). In any case, our transformation is reversible and all functions for the transformation from p1Kd to pKd are shown and available.
+model = model.create_model(order=order,
+                    activations=activations,
+                    num_res_blocks=3,
+                    units_per_head=32,
+                    units_per_layer=128,
+                    dropout_rate=0.3,
+                    drug_kernel=(2, 3),
+                    protein_kernel=(7, 7),
+                    loss_weights=loss_weights,
+                    usemetrics=usemetrics,
+                    uselosses=uselosses,
+                    initializer=initializer,
+                    optimizer=optimizer)
+
+```
+
+### Prepare data
+
+#### Map strings to integers
+```python
+mapseq = mlt.datamap.MapSeq(drug_mode='smiles_1',
+               				protein_mode='protein_3',
+                			max_drug_len=200)
+
+drug_seqs, protein_seqs = data['smiles'].unique(), data['target'].unique()
+
+map_drug, map_protein = mapseq.create_maps(drug_seqs, protein_seqs)
+```
+
+### Create generator
+
+```python
+batch_size = 64
+
+train_gen = mlt.datagen.DataGen(X_train, map_drug, map_protein)
+train_gen = train_gen.get_batch(batch_size)
+
+valid_gen = mlt.datagen.DataGen(X_valid, map_drug, map_protein)
+valid_gen = valid_gen.get_batch(batch_size)
+
+test_gen = mlt.datagen.DataGen(X_test,
+                               map_drug,
+                               map_protein,
+                               shuffle=False,
+                               test_only=True)
+
+test_gen = test_gen.get_batch(test_batch_size)
+```
