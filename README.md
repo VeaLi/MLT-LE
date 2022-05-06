@@ -93,19 +93,19 @@ model = model.create_model(order=order,
 #### Map strings to integers
 
 - drug_mode:
-    - "smiles_1" - map a protein string to a vector of integers, 
+    - "smiles_1" - map a drug SMILES string to a vector of integers, 
      ngram=1, match every character, example: CCC -> [4,4,4],
     see `mltle.data.maps.smiles_1` for the map
 
-    -  "smiles_2" - map a protein string to a vector of integers, 
+    -  "smiles_2" - map a drug SMILES string to a vector of integers, 
     ngram=2, match every character, example: CCC -> [2,2],
     see `mltle.data.maps.smiles_2` for the map
 
-    -  "selfies_1" - map a protein string to a vector of integers, 
+    -  "selfies_1" - map a drug SELFIES string to a vector of integers, 
     ngram=1, match every character, example: CCC -> [3,3,3],
     see `mltle.data.maps.selfies_1` for the map
 
-    -  "selfies_3" - map a protein string to a vector of integers, 
+    -  "selfies_3" - map a drug SELFIES string to a vector of integers, 
     ngram=3, match every character, example: [C][C] -> [2,2],
     see `mltle.data.maps.selfies_3` for the map
 
