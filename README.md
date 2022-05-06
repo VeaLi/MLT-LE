@@ -91,6 +91,33 @@ model = model.create_model(order=order,
 ### Prepare data
 
 #### Map strings to integers
+
+- drug_mode:
+    - "smiles_1" - map a protein string to a vector of integers, 
+     ngram=1, match every character, example: CCC -> [4,4,4],
+    see `mltle.data.maps.smiles_1` for the map
+
+    -  "smiles_2" - map a protein string to a vector of integers, 
+    ngram=2, match every character, example: CCC -> [2,2],
+    see `mltle.data.maps.smiles_2` for the map
+
+    -  "selfies_1" - map a protein string to a vector of integers, 
+    ngram=1, match every character, example: CCC -> [3,3,3],
+    see `mltle.data.maps.selfies_1` for the map
+
+    -  "selfies_3" - map a protein string to a vector of integers, 
+    ngram=3, match every character, example: [C][C] -> [2,2],
+    see `mltle.data.maps.selfies_3` for the map
+
+- protein_mode:
+    -  "protein_1" - map a protein string to a vector of integers, 
+    ngram=1, match every 3 characters, example: LLLSSS -> [3, 3, 3, 5, 5, 5],
+    see `mltle.data.maps.protein_1` for the map
+
+    -  "protein_3" - map a protein string to a vector of integers, 
+    ngram=3, match every 3 characters, example: LLLSSS -> [1, 3, 13, 2],
+    see `mltle.data.maps.protein_3` for the map
+
 ```python
 mapseq = mlt.datamap.MapSeq(drug_mode='smiles_1',
                				protein_mode='protein_3',
@@ -107,10 +134,10 @@ map_drug, map_protein = mapseq.create_maps(drug_seqs, protein_seqs)
 batch_size = 64
 
 train_gen = mlt.datagen.DataGen(X_train, map_drug, map_protein)
-train_gen = train_gen.get_batch(batch_size)
+train_gen = train_gen.get_generator(batch_size)
 
 valid_gen = mlt.datagen.DataGen(X_valid, map_drug, map_protein)
-valid_gen = valid_gen.get_batch(batch_size)
+valid_gen = valid_gen.get_generator(batch_size)
 
 test_gen = mlt.datagen.DataGen(X_test,
                                map_drug,
@@ -118,5 +145,5 @@ test_gen = mlt.datagen.DataGen(X_test,
                                shuffle=False,
                                test_only=True)
 
-test_gen = test_gen.get_batch(test_batch_size)
+test_gen = test_gen.get_generator(test_batch_size)
 ```

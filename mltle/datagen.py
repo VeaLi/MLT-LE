@@ -8,18 +8,24 @@ class DataGen:
     This generator expects variable length drug and protein inputs.
     Data should be passed as pandas.DataFrame, 
     columns order should be the following:
-        [drug sequence, protein sequence, target_1, target_2, ... target_n]
+        [drug_sequence, protein_sequence, target_1, target_2, ... target_n]
         [    Str,              Str,        Float,    Float,   ...  Float]
+        ...
+
+    Target variables may be either Float and np.nan
         
-    Expects any number of target variables > 1.
+    Expects any number of target variables >= 1.
 
 
     Parameters
     ----------
     data : pandas.DataFrame
         columns order should be the following:
-        [drug sequence, protein sequence, target_1, target_2, ... target_n]
+        [drug_sequence, protein_sequence, target_1, target_2, ... target_n]
         [    Str,              Str,        Float,    Float,   ...  Float]
+        ...
+
+        Target variables may be either Float and np.nan
 
     map_drug: Dict[Str, List[int]]
         maps drug string to array of integers
@@ -69,10 +75,22 @@ class DataGen:
                     np.random.shuffle(self.inds)
                 seen = 0
 
-    def get_batch(self, batch_size):
+    def get_generator(self, batch_size):
         """
         This is outer generator.
         Generates one batch
+        
+
+        Parameters
+        ----------
+        batch_size: Int
+
+
+        Returns
+        ----------
+            Tuple[List[array_like], List[arry_like]]
+            (X, Y) tuple
+
         """
 
         while True:
