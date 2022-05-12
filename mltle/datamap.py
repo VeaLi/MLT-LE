@@ -39,8 +39,6 @@ class MapSeq:
         ngram=3, match every 3 characters, example: LLLSSS -> [1, 3, 13, 2],
         see `mltle.data.maps.protein_3` for the map
 
-
-
     max_drug_len: Int, default=200
         Maximum length of the resulting integer vector for drug sequence
 

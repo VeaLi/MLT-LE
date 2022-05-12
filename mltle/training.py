@@ -17,20 +17,27 @@ class LossWithMemoryCallback(tf.keras.callbacks.Callback):
     discount: Float, default=0.6
         which fraction of error to propagate:
         error = last_error*discount
+
+    decay: Float, default=0.8
+        decay of the discount rate per epoch
+        discount = discount*decay
     
     """
-    def __init__(self, variables, discount=0.6):
+    def __init__(self, variables, discount=0.6, decay = 0.8):
         for k, v in variables.items():
             setattr(self, k, v)
 
         self.vars = variables.keys()
         self.discount = discount
+        self.decay = decay
 
     def on_batch_end(self, batch, logs):
         for k in self.vars:
             var = getattr(self, k)
-            e = np.random.uniform(0, 0.001)
-            K.set_value(var, logs[f'{k}_loss']**0.5 * self.discount + e)
+            K.set_value(var, logs[f'{k}_loss']**0.5 * self.discount)
+
+    def on_epoch_end(self, epoch, logs=None):
+        self.discount = self.discount*self.decay
 
 
 def mse_loss_wrapper(var):
@@ -99,20 +106,25 @@ class Model:
                          filters,
                          kernel,
                          initializer,
-                         activation='selu'):
+                         activation):
 
         cnv = tf.keras.layers.Conv1D(filters,
                      kernel,
                      padding='same',
                      kernel_initializer=initializer,
-                     activation=activation)(inp)
+                     activation=None)(inp)
         cnv = tf.keras.layers.BatchNormalization()(cnv)
+
+        if activation == 'relu':
+            cnv = tf.keras.layers.ReLU()(cnv)
 
         return cnv
 
     def create_model(self,
               order=[],
               activations={},
+              activation = 'relu',
+              pooling_mode = 'max',
               num_res_blocks=3,
               units_per_head=32,
               units_per_layer=128,
@@ -123,7 +135,9 @@ class Model:
               usemetrics =  {},
               uselosses = {},
               initializer=None,
-              optimizer = None):
+              optimizer = None,
+              drug_strides_up=1,
+              protein_strides_down=1):
         """
         Returns a compiled tensorflow model according to the passed parameters
         
@@ -149,7 +163,13 @@ class Model:
         activations: Dict[Str, Str]
             dictionary that matches the names of target variables from the order list 
             with the corresponding activation function used in the output layer
-        
+
+        activation: Str or tensorflow.kerad.activations Object, default='relu'
+            activation, which will be used in all layers except the output layer(s).
+            Now only `relu` is accepted!
+
+        pooling_mode: Str, default='max'
+            global pooling mode. Can be either `max` or `avg`
         initializer: Str or tensorflow.keras.initializers object
             tensorflow.keras.initializers compatible kernel initializer
         
@@ -158,7 +178,12 @@ class Model:
             
         protein_kernel: Tuple(Int, Int)
             kernel size for the protein convolutional layer for the 1st and 2nd layers in each residual block
-            
+        
+        drug_strides_up: Int, default=1
+            the first convolution layer for drug input is deconvolution, you can pass stripes>1 to upsample
+
+        protein_strides_down: Int, default=1
+            the first convolution layer for drug input is convolution, you can pass stripes>1 to downsample
             
         
         Returns
@@ -206,59 +231,63 @@ class Model:
             mask_zero=True,
             embeddings_initializer=initializer)(protein_seq)
 
-        drug_skip_con = tf.keras.layers.Conv1D(drug_emb_size,
+        drug_skip_con = tf.keras.layers.Conv1DTranspose(drug_emb_size,
                                drug_kernel[0],
-                               padding='same',
+                               strides = drug_strides_up,
                                name='drug_skip_con_1',
                                kernel_initializer=initializer,
-                               activation='selu')(drug_emb)
+                               activation=activation)(drug_emb)
 
         protein_skip_con = tf.keras.layers.Conv1D(protein_emb_size,
                                   protein_kernel[1],
-                                  padding='same',
+                                  strides = protein_strides_down,
                                   name='protein_skip_con_1',
                                   kernel_initializer=initializer,
-                                  activation='selu')(protein_emb)
+                                  activation=activation)(protein_emb)
 
         for b in range(2, num_res_blocks + 2):
 
             drug_cnv = self._connv_batchnorm(drug_skip_con, num_filters_drug_1,
-                                        drug_kernel[0], initializer, 'selu')
+                                        drug_kernel[0], initializer, activation)
             drug_cnv = self._connv_batchnorm(drug_cnv, num_filters_drug_2,
                                         drug_kernel[1], initializer, None)
 
             protein_cnv = self._connv_batchnorm(protein_skip_con,
                                            num_filters_protein_1,
-                                           protein_kernel[1], initializer,
-                                           'selu')
+                                           protein_kernel[0], initializer,
+                                           activation)
             protein_cnv = self._connv_batchnorm(protein_cnv, num_filters_protein_2,
-                                           protein_kernel[1], initializer,
-                                           None)
+                                           protein_kernel[1], initializer, None)
 
             drug_skip_con = tf.keras.layers.Add(name=f'drug_skip_con_{b}')([drug_skip_con, drug_cnv])
             protein_skip_con = tf.keras.layers.Add(name=f'protein_skip_con_{b}')([protein_skip_con, protein_cnv])
 
-            drug_skip_con = tf.keras.layers.ELU()(drug_skip_con)
-            protein_skip_con = tf.keras.layers.ELU()(protein_skip_con)
+            if activation == 'relu':
+                drug_skip_con = tf.keras.layers.ReLU()(drug_skip_con)
+                protein_skip_con = tf.keras.layers.ReLU()(protein_skip_con)
 
-        drug_global_pooled = tf.keras.layers.GlobalMaxPool1D(name='drug_global_pooled')(drug_skip_con)
-        protein_global_pooled = tf.keras.layers.GlobalMaxPool1D(name='protein_global_pooled')(protein_skip_con)
+        if pooling_mode == 'max':
+            drug_global_pooled = tf.keras.layers.GlobalMaxPool1D(name='drug_global_pooled')(drug_skip_con)
+            protein_global_pooled = tf.keras.layers.GlobalMaxPool1D(name='protein_global_pooled')(protein_skip_con)
+        elif pooling_mode == 'avg':
+            drug_global_pooled = tf.keras.layers.GlobalAveragePooling1D(name='drug_global_pooled')(drug_skip_con)
+            protein_global_pooled = tf.keras.layers.GlobalAveragePooling1D(name='protein_global_pooled')(protein_skip_con)
 
         drug_protein_vec = tf.keras.layers.concatenate([drug_global_pooled, protein_global_pooled], axis=-1, name='drug_protein_vec')
-        drug_protein_vec = tf.keras.layers.BatchNormalization()(drug_protein_vec)
-        drug_protein_vec = tf.keras.layers.Dropout(dropout_rate)(drug_protein_vec)
 
-        shared_layer = tf.keras.layers.Dense(units_per_layer, name='shared_layer')(drug_protein_vec)
-        shared_layer = tf.keras.layers.BatchNormalization()(shared_layer)
+        shared_layer = tf.keras.layers.Dense(units_per_layer, name='shared_layer_1', activation=activation)(drug_protein_vec)
+        shared_layer = tf.keras.layers.Dropout(dropout_rate)(shared_layer)
+
+
+        shared_layer = tf.keras.layers.Dense(units_per_layer, name='shared_layer_2', activation=activation)(shared_layer)
         shared_layer = tf.keras.layers.Dropout(dropout_rate)(shared_layer)
 
         head_layers = {}
         for out in order:
             head = tf.keras.layers.Dense(units_per_head,
-                                         activation='selu',
+                                         activation=activation,
                                          name=f'head_{out}',
                                          kernel_initializer=initializer)(shared_layer)
-            head = tf.keras.layers.BatchNormalization()(head)
             head_layers[out] = head
 
         outputs = []
