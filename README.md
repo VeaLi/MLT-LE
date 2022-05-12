@@ -12,7 +12,9 @@
 | *__Total__* | 906,096 |
 Table 1: Num. of non-overlaping samples (unique drug-target pairs) in train-dev-test
 
-
+Balance for each class: <br/>
+1.0 : 58.3% records (active compounds)<br/>
+0.0 : 41.6% records (non-active compounds)<br/>
 
 ## Install environment
 
