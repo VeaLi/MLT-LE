@@ -1,0 +1,15 @@
+artifact_uri: file:///A:/ASAP/MLT-LE/MLT-LE/MLFlow/mlruns/1/1ceacb29c3fe40c2a114369449c8daa0/artifacts
+end_time: 1652440689995
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: 1ceacb29c3fe40c2a114369449c8daa0
+run_uuid: 1ceacb29c3fe40c2a114369449c8daa0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1652437521108
+status: 3
+tags: []
+user_id: Paul

@@ -1,0 +1,18 @@
+name: mltle_params
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      epochs:      {type: int, default: 20}
+      batch_size:  {type: int, default: 64}
+      num_res_blocks:  {type: int}
+      discount:  {type: float}
+      data: {type: str}
+    command: "python train.py
+                --epochs {epochs}
+                --batch_size {batch_size}
+                --num_res_blocks {num_res_blocks}
+                --discount {discount}
+                --data {data}"

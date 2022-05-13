@@ -1,0 +1,74 @@
+Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ drug_seq_inp (InputLayer)      [(None, None)]       0           []                               
+                                                                                                  
+ drug_pos_inp (InputLayer)      [(None, None)]       0           []                               
+                                                                                                  
+ drug_seq_emb (Embedding)       (None, None, 128)    6784        ['drug_seq_inp[0][0]']           
+                                                                                                  
+ drug_pos_emb (Embedding)       (None, None, 128)    25728       ['drug_pos_inp[0][0]']           
+                                                                                                  
+ protein_seq_inp (InputLayer)   [(None, None)]       0           []                               
+                                                                                                  
+ drug_emb (Add)                 (None, None, 128)    0           ['drug_seq_emb[0][0]',           
+                                                                  'drug_pos_emb[0][0]']           
+                                                                                                  
+ protein_emb (Embedding)        (None, None, 64)     512384      ['protein_seq_inp[0][0]']        
+                                                                                                  
+ drug_skip_con_1 (Conv1DTranspo  (None, None, 128)   32896       ['drug_emb[0][0]']               
+ se)                                                                                              
+                                                                                                  
+ protein_skip_con_1 (Conv1D)    (None, None, 64)     28736       ['protein_emb[0][0]']            
+                                                                                                  
+ drug_global_pooled (GlobalMaxP  (None, 128)         0           ['drug_skip_con_1[0][0]']        
+ ooling1D)                                                                                        
+                                                                                                  
+ protein_global_pooled (GlobalM  (None, 64)          0           ['protein_skip_con_1[0][0]']     
+ axPooling1D)                                                                                     
+                                                                                                  
+ drug_protein_vec (Concatenate)  (None, 192)         0           ['drug_global_pooled[0][0]',     
+                                                                  'protein_global_pooled[0][0]']  
+                                                                                                  
+ shared_layer_1 (Dense)         (None, 256)          49408       ['drug_protein_vec[0][0]']       
+                                                                                                  
+ dropout (Dropout)              (None, 256)          0           ['shared_layer_1[0][0]']         
+                                                                                                  
+ shared_layer_2 (Dense)         (None, 256)          65792       ['dropout[0][0]']                
+                                                                                                  
+ dropout_1 (Dropout)            (None, 256)          0           ['shared_layer_2[0][0]']         
+                                                                                                  
+ head_p1Ki (Dense)              (None, 64)           16448       ['dropout_1[0][0]']              
+                                                                                                  
+ head_p1IC50 (Dense)            (None, 64)           16448       ['dropout_1[0][0]']              
+                                                                                                  
+ head_p1Kd (Dense)              (None, 64)           16448       ['dropout_1[0][0]']              
+                                                                                                  
+ head_p1EC50 (Dense)            (None, 64)           16448       ['dropout_1[0][0]']              
+                                                                                                  
+ head_is_active (Dense)         (None, 64)           16448       ['dropout_1[0][0]']              
+                                                                                                  
+ head_pH (Dense)                (None, 64)           16448       ['dropout_1[0][0]']              
+                                                                                                  
+ head_pSL (Dense)               (None, 64)           16448       ['dropout_1[0][0]']              
+                                                                                                  
+ p1Ki (Dense)                   (None, 1)            65          ['head_p1Ki[0][0]']              
+                                                                                                  
+ p1IC50 (Dense)                 (None, 1)            65          ['head_p1IC50[0][0]']            
+                                                                                                  
+ p1Kd (Dense)                   (None, 1)            65          ['head_p1Kd[0][0]']              
+                                                                                                  
+ p1EC50 (Dense)                 (None, 1)            65          ['head_p1EC50[0][0]']            
+                                                                                                  
+ is_active (Dense)              (None, 1)            65          ['head_is_active[0][0]']         
+                                                                                                  
+ pH (Dense)                     (None, 1)            65          ['head_pH[0][0]']                
+                                                                                                  
+ pSL (Dense)                    (None, 1)            65          ['head_pSL[0][0]']               
+                                                                                                  
+==================================================================================================
+Total params: 837,319
+Trainable params: 837,319
+Non-trainable params: 0
+__________________________________________________________________________________________________

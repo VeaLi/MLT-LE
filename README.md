@@ -31,7 +31,53 @@ or:
 conda env create --file conda.yaml
 conda activate mltle
 ```
+
+## MLFlow project
+
+In MLFlow/ directory MLFlow project can be found.
+
+To run MLFlow pipeline:
+```bash
+conda env create --file conda.yaml
+conda activate mltle_params
+python run_experiments.py
+mlflow ui
+```
+`mlflow ui` will serve at http://127.0.0.1:5000.
+
+Parameters can be set in `run_experiments.py`. 
+Parametere search is performed on subset of data. See `MLFlow/data_subset/`
+
+
+
 ## Usage
+
+### Predict
+
+```Python
+from examples.example_target_sequences import VDR, MTOR, GABA
+import pandas as pd
+import mltle as mlt
+
+model = mlt.predict.Model('Res2_06')
+
+# this model expect SMILES string to be canonical
+vdr_ligand_calcitriol = "C=C1C(=CC=C2CCCC3(C)C2CCC3C(C)CCCC(C)(C)O)CC(O)CC1O"
+vdr_ligand_calcitriol = mlt.utils.to_non_isomeric_canonical(vdr_ligand_calcitriol)
+
+gaba_ligand_diazepam = "CN1C(=O)CN=C(c2ccccc2)c2cc(Cl)ccc21"
+gaba_ligand_diazepam = mlt.utils.to_non_isomeric_canonical(gaba_ligand_diazepam)
+
+mtor_ligand_torin1 = "CCC(=O)N1CCN(c2ccc(-n3c(=O)ccc4cnc5ccc(-c6cnc7ccccc7c6)cc5c43)cc2C(F)(F)F)CC1"
+mtor_ligand_torin1 = mlt.utils.to_non_isomeric_canonical(mtor_ligand_torin1)
+
+X_predict = pd.DataFrame()
+X_predict['drug'] = [vdr_ligand_calcitriol, gaba_ligand_diazepam, mtor_ligand_torin1]
+X_predict['protein'] = [VDR, GABA, MTOR]
+
+prediction = model.predict(X_predict)
+```
+
 
 
 ### Training
@@ -105,14 +151,14 @@ model = model.create_model(order=order,
 
 |`drug_mode`||
 |-----------|-|
-|`smiles_1`|map a drug SMILES string to a vector of integers, ngram=1, match every character, example: CCC -> [4,4,4], see `mltle.data.maps.smiles_1` for the map|
-|`smiles_2`|map a drug SMILES string to a vector of integers, ngram=2, match every character, example: CCC -> [2,2], see `mltle.data.maps.smiles_2` for the map|
-|`selfies_1`|map a drug SELFIES string to a vector of integers, ngram=1, match every character, example: CCC -> [3,3,3], see `mltle.data.maps.selfies_1` for the map|
-|`selfies_3`|map a drug SELFIES string to a vector of integers, ngram=3, match every character, example: [C][C] -> [2,2], see `mltle.data.maps.selfies_3` for the map|
+|`smiles_1`|map a drug SMILES string to a vector of integers, ngram=1, match every 1 character, example: CCC -> [4,4,4], see `mltle.data.maps.smiles_1` for the map|
+|`smiles_2`|map a drug SMILES string to a vector of integers, ngram=2, match every 2 characters, example: CCC -> [2,2], see `mltle.data.maps.smiles_2` for the map|
+|`selfies_1`|map a drug SELFIES string to a vector of integers, ngram=1, match every 1 character, example: CCC -> [3,3,3], see `mltle.data.maps.selfies_1` for the map|
+|`selfies_3`|map a drug SELFIES string to a vector of integers, ngram=3, match every 3 characters, example: [C][C] -> [2,2], see `mltle.data.maps.selfies_3` for the map|
 
 |`protein_mode`||
 |-----------|-|
-|`protein_1`|map a protein string to a vector of integers, ngram=1, match every 1 characters, example: LLLSSS -> [3, 3, 3, 5, 5, 5], see `mltle.data.maps.protein_1` for the map|
+|`protein_1`|map a protein string to a vector of integers, ngram=1, match every 1 character, example: LLLSSS -> [3, 3, 3, 5, 5, 5], see `mltle.data.maps.protein_1` for the map|
 |`protein_3`|map a protein string to a vector of integers,  ngram=3, match every 3 characters, example: LLLSSS -> [1, 3, 13, 2], see `mltle.data.maps.protein_3` for the map|
 
 

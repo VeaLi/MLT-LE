@@ -1,0 +1,11 @@
+name: mltle_params
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7.13
+  - pip:
+    - mlflow
+    - tensorflow
+    - tensorflow_addons
+    - scikit-learn
+    - tqdm
