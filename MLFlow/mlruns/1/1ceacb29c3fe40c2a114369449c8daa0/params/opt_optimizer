@@ -1,1 +1,0 @@
-{'class_name': 'Nadam', 'config': {'name': 'Nadam', 'learning_rate': 0.001, 'decay': 0.004, 'beta_1': 0.9, 'beta_2': 0.999, 'epsilon': 1e-07}}

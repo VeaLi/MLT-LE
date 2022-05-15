@@ -41,13 +41,20 @@ class MlFlowCallback(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         log_metrics(logs, step=epoch)
 
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=0) 
 
-
-def run_experiment(run, experiment_name, num_epochs, batch_size, num_res_blocks, discount, data):
+def run_experiment(run, experiment_name, num_epochs, batch_size, num_res_blocks, discount, data, use_loss_weights):
 
 
     data = pd.read_csv(data)
     order = data.columns[2:]
+
+    if use_loss_weights:
+        loss_weights = softmax(1 - data.iloc[:,2:].notna().mean()).values.tolist()
+    else:
+        loss_weights = [1.0] * len(order)
 
 
 
@@ -58,7 +65,7 @@ def run_experiment(run, experiment_name, num_epochs, batch_size, num_res_blocks,
                               protein_alphabet_len=8006)
 
     
-    loss_weights = [1.0] * len(order)
+    
 
     variables = {}
     for var in order:
@@ -130,7 +137,7 @@ def run_experiment(run, experiment_name, num_epochs, batch_size, num_res_blocks,
                     epochs=num_epochs)
 
 
-def main(experiment_name, epochs, batch_size, num_res_blocks, discount, data):
+def main(experiment_name, epochs, batch_size, num_res_blocks, discount, data, use_loss_weights):
     if experiment_name:
         mlflow.set_experiment(experiment_name)
 
@@ -146,7 +153,7 @@ def main(experiment_name, epochs, batch_size, num_res_blocks, discount, data):
         mlflow.set_tag("version.tensorflow", tf.__version__)
         mlflow.set_tag("mlflow_tensorflow.autolog", True)
 
-        run_experiment(run, experiment_name, epochs, batch_size, num_res_blocks, discount, data)
+        run_experiment(run, experiment_name, epochs, batch_size, num_res_blocks, discount, data, use_loss_weights)
 
     mlflow.end_run()
 
@@ -159,6 +166,7 @@ if __name__ == "__main__":
     parser.add_argument('--num_res_blocks')
     parser.add_argument('--discount')
     parser.add_argument('--data')
+    parser.add_argument('--use_loss_weights')
     args = parser.parse_args()
 
     experiment_name = str(args.experiment_name)
@@ -167,5 +175,6 @@ if __name__ == "__main__":
     num_res_blocks = int(args.num_res_blocks)
     discount = float(args.discount)
     data = str(args.data)
+    use_loss_weights = bool(args.use_loss_weights)
 
-    main(experiment_name, epochs, batch_size, num_res_blocks, discount, data)
+    main(experiment_name, epochs, batch_size, num_res_blocks, discount, data, use_loss_weights)

@@ -18,3 +18,5 @@ __all__ = [
     "predict",
     "utils"
 ]
+
+print('Done.')

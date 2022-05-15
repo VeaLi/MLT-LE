@@ -13,8 +13,8 @@
 Table 1: Num. of non-overlaping samples (unique drug-target pairs) in train-dev-test
 
 Balance for each class: <br/>
-1.0 : 58.3% records (active compounds)<br/>
-0.0 : 41.6% records (non-active compounds)<br/>
+`1.0` : 58.3% records (active compounds)<br/>
+`0.0` : 41.6% records (non-active compounds)<br/>
 
 ## Install environment
 
@@ -35,6 +35,7 @@ conda activate mltle
 ## MLFlow project
 
 In MLFlow/ directory MLFlow project can be found.
+It is used to analyze the impact of model parameters. For example, the number of residual blocks.
 
 To run MLFlow pipeline:
 ```bash
@@ -46,11 +47,19 @@ mlflow ui
 `mlflow ui` will serve at http://127.0.0.1:5000.
 
 Parameters can be set in `run_experiments.py`. 
-Parametere search is performed on subset of data. See `MLFlow/data_subset/`
+Parameters search is performed on subset of data. See `MLFlow/data_subset/`
 
 
 
 ## Usage
+
+- [Predict](#predict)
+- [Train](#train)
+    - [Define model](#define-model)
+    - [Prepare data](#prepare-data)
+      - [Map strings to integers](#map-string-to-integers)
+      - [Data generator](#data-generator)
+
 
 ### Predict
 
@@ -80,7 +89,7 @@ prediction = model.predict(X_predict)
 
 
 
-### Training
+### Train
 
 #### Define model
 ```python

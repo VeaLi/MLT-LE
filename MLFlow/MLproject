@@ -10,9 +10,11 @@ entry_points:
       num_res_blocks:  {type: int}
       discount:  {type: float}
       data: {type: str}
+      use_loss_weights: {type: bool}
     command: "python train.py
                 --epochs {epochs}
                 --batch_size {batch_size}
                 --num_res_blocks {num_res_blocks}
                 --discount {discount}
-                --data {data}"
+                --data {data}
+                --use_loss_weights {use_loss_weights}"

@@ -86,7 +86,7 @@ class Model:
     
     Author
     ----------
-    Elisaveta V
+
     """
     def __init__(self,
                  drug_emb_size=64,

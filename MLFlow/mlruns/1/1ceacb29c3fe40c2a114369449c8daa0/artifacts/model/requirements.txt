@@ -1,3 +1,0 @@
-mlflow
-keras==2.8.0
-tensorflow==2.6.0
