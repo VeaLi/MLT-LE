@@ -1,0 +1,4 @@
+artifact_location: file:///content/MLFlow_run/mlruns/100
+experiment_id: '100'
+lifecycle_stage: active
+name: data20k_mltle_Res1_0_0_N_1_protein_1

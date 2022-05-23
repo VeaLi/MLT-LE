@@ -1,0 +1,4 @@
+artifact_location: file:///content/MLFlow_run/mlruns/45
+experiment_id: '45'
+lifecycle_stage: active
+name: data20k_mltle_Res0_9_0_pH_0_protein_3

@@ -1,0 +1,4 @@
+artifact_location: file:///content/MLFlow_run/mlruns/107
+experiment_id: '107'
+lifecycle_stage: active
+name: data20k_tdc_Res1_0_0_pH_1_protein_3

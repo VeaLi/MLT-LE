@@ -1,0 +1,104 @@
+Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ drug_seq_inp (InputLayer)      [(None, None)]       0           []                               
+                                                                                                  
+ drug_pos_inp (InputLayer)      [(None, None)]       0           []                               
+                                                                                                  
+ drug_seq_emb (Embedding)       (None, None, 64)     3392        ['drug_seq_inp[0][0]']           
+                                                                                                  
+ drug_pos_emb (Embedding)       (None, None, 64)     12864       ['drug_pos_inp[0][0]']           
+                                                                                                  
+ protein_seq_inp (InputLayer)   [(None, None)]       0           []                               
+                                                                                                  
+ drug_emb (Add)                 (None, None, 64)     0           ['drug_seq_emb[0][0]',           
+                                                                  'drug_pos_emb[0][0]']           
+                                                                                                  
+ protein_emb (Embedding)        (None, None, 32)     256192      ['protein_seq_inp[0][0]']        
+                                                                                                  
+ drug_skip_con_1 (Conv1DTranspo  (None, None, 64)    8256        ['drug_emb[0][0]']               
+ se)                                                                                              
+                                                                                                  
+ protein_skip_con_1 (Conv1D)    (None, None, 32)     7200        ['protein_emb[0][0]']            
+                                                                                                  
+ conv1d (Conv1D)                (None, None, 32)     4128        ['drug_skip_con_1[0][0]']        
+                                                                                                  
+ conv1d_2 (Conv1D)              (None, None, 16)     3600        ['protein_skip_con_1[0][0]']     
+                                                                                                  
+ batch_normalization (BatchNorm  (None, None, 32)    128         ['conv1d[0][0]']                 
+ alization)                                                                                       
+                                                                                                  
+ batch_normalization_2 (BatchNo  (None, None, 16)    64          ['conv1d_2[0][0]']               
+ rmalization)                                                                                     
+                                                                                                  
+ re_lu (ReLU)                   (None, None, 32)     0           ['batch_normalization[0][0]']    
+                                                                                                  
+ re_lu_1 (ReLU)                 (None, None, 16)     0           ['batch_normalization_2[0][0]']  
+                                                                                                  
+ conv1d_1 (Conv1D)              (None, None, 64)     6208        ['re_lu[0][0]']                  
+                                                                                                  
+ conv1d_3 (Conv1D)              (None, None, 32)     3616        ['re_lu_1[0][0]']                
+                                                                                                  
+ batch_normalization_1 (BatchNo  (None, None, 64)    256         ['conv1d_1[0][0]']               
+ rmalization)                                                                                     
+                                                                                                  
+ batch_normalization_3 (BatchNo  (None, None, 32)    128         ['conv1d_3[0][0]']               
+ rmalization)                                                                                     
+                                                                                                  
+ drug_skip_con_2 (Add)          (None, None, 64)     0           ['drug_skip_con_1[0][0]',        
+                                                                  'batch_normalization_1[0][0]']  
+                                                                                                  
+ protein_skip_con_2 (Add)       (None, None, 32)     0           ['protein_skip_con_1[0][0]',     
+                                                                  'batch_normalization_3[0][0]']  
+                                                                                                  
+ re_lu_2 (ReLU)                 (None, None, 64)     0           ['drug_skip_con_2[0][0]']        
+                                                                                                  
+ re_lu_3 (ReLU)                 (None, None, 32)     0           ['protein_skip_con_2[0][0]']     
+                                                                                                  
+ drug_global_pooled (GlobalMaxP  (None, 64)          0           ['re_lu_2[0][0]']                
+ ooling1D)                                                                                        
+                                                                                                  
+ protein_global_pooled (GlobalM  (None, 32)          0           ['re_lu_3[0][0]']                
+ axPooling1D)                                                                                     
+                                                                                                  
+ drug_protein_vec (Concatenate)  (None, 96)          0           ['drug_global_pooled[0][0]',     
+                                                                  'protein_global_pooled[0][0]']  
+                                                                                                  
+ shared_layer_1 (Dense)         (None, 512)          49664       ['drug_protein_vec[0][0]']       
+                                                                                                  
+ dropout (Dropout)              (None, 512)          0           ['shared_layer_1[0][0]']         
+                                                                                                  
+ shared_layer_2 (Dense)         (None, 512)          262656      ['dropout[0][0]']                
+                                                                                                  
+ dropout_1 (Dropout)            (None, 512)          0           ['shared_layer_2[0][0]']         
+                                                                                                  
+ head_p1Ki (Dense)              (None, 64)           32832       ['dropout_1[0][0]']              
+                                                                                                  
+ head_p1IC50 (Dense)            (None, 64)           32832       ['dropout_1[0][0]']              
+                                                                                                  
+ head_p1Kd (Dense)              (None, 64)           32832       ['dropout_1[0][0]']              
+                                                                                                  
+ head_p1EC50 (Dense)            (None, 64)           32832       ['dropout_1[0][0]']              
+                                                                                                  
+ head_is_active (Dense)         (None, 64)           32832       ['dropout_1[0][0]']              
+                                                                                                  
+ head_qed (Dense)               (None, 64)           32832       ['dropout_1[0][0]']              
+                                                                                                  
+ p1Ki (Dense)                   (None, 1)            65          ['head_p1Ki[0][0]']              
+                                                                                                  
+ p1IC50 (Dense)                 (None, 1)            65          ['head_p1IC50[0][0]']            
+                                                                                                  
+ p1Kd (Dense)                   (None, 1)            65          ['head_p1Kd[0][0]']              
+                                                                                                  
+ p1EC50 (Dense)                 (None, 1)            65          ['head_p1EC50[0][0]']            
+                                                                                                  
+ is_active (Dense)              (None, 1)            65          ['head_is_active[0][0]']         
+                                                                                                  
+ qed (Dense)                    (None, 1)            65          ['head_qed[0][0]']               
+                                                                                                  
+==================================================================================================
+Total params: 815,734
+Trainable params: 815,446
+Non-trainable params: 288
+__________________________________________________________________________________________________

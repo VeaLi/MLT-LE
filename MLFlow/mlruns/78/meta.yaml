@@ -1,0 +1,4 @@
+artifact_location: file:///content/MLFlow_run/mlruns/78
+experiment_id: '78'
+lifecycle_stage: active
+name: data20k_tdc_Res0_9_0_N_0_protein_1

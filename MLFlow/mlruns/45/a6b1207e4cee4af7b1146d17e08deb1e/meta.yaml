@@ -1,0 +1,15 @@
+artifact_uri: file:///content/MLFlow_run/mlruns/45/a6b1207e4cee4af7b1146d17e08deb1e/artifacts
+end_time: 1653299096159
+entry_point_name: ''
+experiment_id: '45'
+lifecycle_stage: active
+name: ''
+run_id: a6b1207e4cee4af7b1146d17e08deb1e
+run_uuid: a6b1207e4cee4af7b1146d17e08deb1e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1653298892531
+status: 3
+tags: []
+user_id: root
