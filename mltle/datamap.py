@@ -43,11 +43,12 @@ class MapSeq:
         Maximum length of the resulting integer vector for drug sequence
 
     """
+
     def __init__(self,
                  drug_mode='smiles_1',
                  protein_mode='protein_3',
-                 max_drug_len=200):
-
+                 max_drug_len=200,
+                 max_protein_len=float('inf')):
 
         self.drug_dict = getattr(maps, drug_mode)
         self.protein_dict = getattr(maps, protein_mode)
@@ -55,15 +56,14 @@ class MapSeq:
         self.drug_step = int(drug_mode.split('_')[-1])
         self.protein_step = int(protein_mode.split('_')[-1])
 
-        self.max_drug_len = 200
-
-
+        self.max_drug_len = max_drug_len
+        self.max_protein_len = max_protein_len
 
     def create_maps(self, drug_seqs, protein_seqs):
         """
         This is outer generator.
         Generates one batch
-        
+
 
         Parameters
         ----------
@@ -96,11 +96,12 @@ class MapSeq:
 
         map_protein = {}
         for protein in tqdm(protein_seqs):
-            protein_len = len(protein)
+            protein_len = int(min(len(protein), self.max_protein_len))
             protein_vec = []
 
             for i in range(protein_len - self.protein_step):
-                v = self.protein_dict.get(protein[i:i + self.protein_step].upper(), 0)
+                v = self.protein_dict.get(
+                    protein[i:i + self.protein_step].upper(), 0)
                 protein_vec.append(v)
 
             map_protein[protein] = protein_vec
