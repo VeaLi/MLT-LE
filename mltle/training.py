@@ -300,8 +300,14 @@ class Model:
         for out in order:
             head = tf.keras.layers.Dense(units_per_head,
                                          activation=activation,
-                                         name=f'head_{out}',
+                                         name=f'head_{out}_1',
                                          kernel_initializer=initializer)(shared_layer)
+
+            head = tf.keras.layers.Dense(units_per_head,
+                                         activation=activation,
+                                         name=f'head_{out}_2',
+                                         kernel_initializer=initializer)(head)
+
             # head = tf.keras.layers.BatchNormalization()(head)
             head_layers[out] = head
 
