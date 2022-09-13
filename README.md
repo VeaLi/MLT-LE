@@ -26,7 +26,7 @@ source activate mltle
 or:
 
 ```sh
-conda env create --file mlte.yml
+conda env create --file mltle.yml
 conda activate mltle
 ```
 
@@ -34,6 +34,8 @@ conda activate mltle
   - tensorflow==2.9.1
   - rdkit-pypi==2022.3.5
   - networkx==2.8.5
+
+See all dependencies in `mltle.yml` file.
 
 
 ## Usage
