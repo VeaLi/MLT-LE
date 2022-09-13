@@ -13,7 +13,7 @@ class DataGen:
         ...
 
     Target variables can contain both Float and np.nan
-        
+
     Expects any number of target variables >= 1.
 
 
@@ -30,7 +30,7 @@ class DataGen:
         ...
 
         Target variables can contain both Float and np.nan
-            
+
         Expects any number of target variables >= 1.
 
     map_drug: Dict[Str, List[int]]
@@ -45,17 +45,20 @@ class DataGen:
     test_only: Bool, default=False
         sets target variables to 0
     """
+
     def __init__(self,
                  data,
                  map_drug,
                  map_protein,
                  shuffle=True,
-                 test_only=False):
+                 test_only=False,
+                 drug_graph_mode=False):
         self.data = data
         self.map_drug = map_drug
         self.map_protein = map_protein
         self.shuffle = shuffle
         self.test_only = test_only
+        self.drug_graph_mode = drug_graph_mode
         self.size = self.data.shape[0]
         self.inds = list(range(self.size))
         if self.shuffle:
@@ -73,8 +76,15 @@ class DataGen:
         while seen < self.size:
             ind = self.inds[seen]
             sample = self.data.iloc[ind, :].values.tolist()
-            sample[0] = self.map_drug[sample[0]]
-            sample[1] = self.map_protein[sample[1]]
+
+            if not self.drug_graph_mode:
+                sample[0] = self.map_drug[sample[0]]
+                sample[1] = self.map_protein[sample[1]]
+            else:
+                nodes, adj = self.map_drug[sample[0]]
+                sample[0] = tf.sparse.to_dense(adj)
+                sample[1] = self.map_protein[sample[1]]
+                sample = [tf.sparse.to_dense(nodes)] + sample
 
             yield sample
             seen += 1
@@ -87,7 +97,7 @@ class DataGen:
         """
         This is outer generator.
         Generates one batch
-        
+
 
         Parameters
         ----------
@@ -110,28 +120,60 @@ class DataGen:
                         BATCH.append([])
                     BATCH[k].append(value)
 
-            drug_lens = [len(d) for d in BATCH[0]]
-            drug_len = max(drug_lens)
+            if not self.drug_graph_mode:
+                drug_lens = [len(d) for d in BATCH[0]]
+                drug_len = max(drug_lens)
 
-            target_lens = [len(d) for d in BATCH[1]]
-            target_len = max(target_lens)
+                target_lens = [len(d) for d in BATCH[1]]
+                target_len = max(target_lens)
 
-            # here batch is cut/padded to default maximum length in batch
-            # -> batches have different shapes
-            BATCH[0] = tf.keras.preprocessing.sequence.pad_sequences(BATCH[0], drug_len, padding='post', truncating='post')
-            BATCH[1] = tf.keras.preprocessing.sequence.pad_sequences(BATCH[1], target_len, padding='post', truncating='post')
+                # here batch is cut/padded to default maximum length in batch
+                # -> batches have different shapes
+                BATCH[0] = tf.keras.preprocessing.sequence.pad_sequences(
+                    BATCH[0], drug_len, padding='post', truncating='post')
+                BATCH[1] = tf.keras.preprocessing.sequence.pad_sequences(
+                    BATCH[1], target_len, padding='post', truncating='post')
 
-            # positional encoding, 0 - reserved for padding
-            drug_inds = [range(1, v + 1) for v in drug_lens]
-            drug_inds = tf.keras.preprocessing.sequence.pad_sequences(drug_inds, drug_len, padding='post', truncating='post')
+                # positional encoding, 0 - reserved for padding
+                drug_inds = [range(1, v + 1) for v in drug_lens]
+                drug_inds = tf.keras.preprocessing.sequence.pad_sequences(
+                    drug_inds, drug_len, padding='post', truncating='post')
 
-            # all columns from 3d (index=2), are treated as target variables
-            for k in range(2, len(BATCH)):
-                BATCH[k] = np.array(BATCH[k]).flatten()
+                # all columns from 3d (index=2), are treated as target variables
+                for k in range(2, len(BATCH)):
+                    BATCH[k] = np.array(BATCH[k]).flatten()
 
-            if not self.test_only:
-                yield [BATCH[0], BATCH[1], drug_inds], [BATCH[k] for k in range(2, len(BATCH))]
+                if not self.test_only:
+                    yield [BATCH[0], BATCH[1], drug_inds], [BATCH[k] for k in range(2, len(BATCH))]
+                else:
+                    # it is necessary to pass same shaped tuple to tensorflow model
+                    # here target variables are zeroes
+                    yield [BATCH[0], BATCH[1], drug_inds], [BATCH[k] * 0 for k in range(2, len(BATCH))]
+
             else:
-                # it is necessary to pass same shaped tuple to tensorflow model
-                # here target variables are zeroes
-                yield [BATCH[0], BATCH[1], drug_inds], [BATCH[k] * 0 for k in range(2, len(BATCH))]
+                target_lens = [len(d) for d in BATCH[2]]
+                target_len = max(target_lens)
+
+                # here batch is cut/padded to default maximum length in batch
+                # -> batches have different shapes
+
+                BATCH[0] = tf.stack(BATCH[0])
+                BATCH[1] = tf.stack(BATCH[1])
+                BATCH[2] = tf.keras.preprocessing.sequence.pad_sequences(
+                    BATCH[2], target_len, padding='post', truncating='post')
+
+                # positional encoding, 0 - reserved for padding
+                drug_inds = [range(10) for v in range(batch_size)]
+                drug_inds = tf.keras.preprocessing.sequence.pad_sequences(
+                    drug_inds, 10, padding='post', truncating='post')
+
+                # all columns from 3d (index=2), are treated as target variables
+                for k in range(3, len(BATCH)):
+                    BATCH[k] = np.array(BATCH[k]).flatten()
+
+                if not self.test_only:
+                    yield [BATCH[0], BATCH[1], BATCH[2], drug_inds], [BATCH[k] for k in range(3, len(BATCH))]
+                else:
+                    # it is necessary to pass same shaped tuple to tensorflow model
+                    # here target variables are zeroes
+                    yield [BATCH[0], BATCH[1], BATCH[2], drug_inds], [BATCH[k] * 0 for k in range(3, len(BATCH))]

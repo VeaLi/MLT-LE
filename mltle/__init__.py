@@ -2,21 +2,22 @@ try:
     import tensorflow as tf
     from keras import backend as K
 except ImportError:
-    print("\n\nFailed to import tensorflow.\n\n")
+    print("Failed to import tensorflow")
     raise
 
-from mltle import (training, datagen, datamap, predict)
+from mltle import (training, graph_training, datagen, datamap, predict)
 
 try:
-    from mltle import utils
-except:
-    print('Failed to load RDkit. `mltle.utils` is not available')
+    from mltle import chem_utils
+except Exception as e:
+    print('Failed to load `mltle.chem_utils`. This module is not available')
+    print(e)
 
+try:
+    from mltle import training_utils
+except Exception as e:
+    print('`mltle.trainining_utils` is not available')
+    print(e)
 
-__all__ = [
-    "training",
-    "datagen",
-    "datamap"
-]
 
 print('Done.')
