@@ -3,8 +3,9 @@
 This repository hosts the MLT-LE framework, designed to provide a set of tools for creating significantly deep multi-task models for predicting drug-target affinity.
 
 ### Features
-The MLT-LE framework has various encoding options, including: variable-length encoding, positional encoding, and graph-based encoding. All models are implemented as residual networks, which allows to create significantly deep models of 15 layers or more.
+The MLT-LE framework has a variety of encoding options, including: __variable-length encoding__ or __positional encoding__ with different __label encodings__, as well as __graph-based encodings__ with different graph normalization options (See description below in [Prepare data](#prepare-data) section). All models are implemented as residual networks, which allows for significantly deep models of 15 layers or more.
 
+In addition, the framework allows a built-in dimensionality reduction/expansion using __adjustable convolution step__ for protein sequences and __deconvolution__ for drug sequences.
 
 ### Performance
 ![](img/on_test.png?raw=true)
