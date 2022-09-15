@@ -10,11 +10,6 @@ In addition, the framework allows a built-in dimensionality reduction/expansion 
 ### Performance
 ![](img/on_test.png?raw=true)
 
-### Cite Us
-___
-TODO
-___
-
 ## Install environment
 
 Install dependencies and activate environment
@@ -229,3 +224,19 @@ test_gen = test_gen.get_generator(test_batch_size)
 
 ### Predict
 Examples of training and prediction for each available model can be found in the folder `examples/graphdta-mltle-test/mltle/notebooks`.
+
+### For citation
+___
+If you found this package useful, you can find our work here: [http://arxiv.org/abs/2209.06274](https://arxiv.org/abs/2209.06274).
+```
+@misc{vinogradova2022mltle,
+    title = {{MLT}-{LE}: predicting drug-target binding affinity with multi-task residual neural networks},
+    url = {http://arxiv.org/abs/2209.06274},
+    doi = {10.48550/arXiv.2209.06274},
+    urldate = {2022-09-15},
+    publisher = {arXiv},
+    author = {Vinogradova, Elizaveta and Pats, Karina and Molnár, Ferdinand and Fazli, Siamac},
+    month = sep,
+    year = {2022}
+}
+```
