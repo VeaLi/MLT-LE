@@ -8,7 +8,35 @@ The MLT-LE framework has a variety of encoding options, including: __variable-le
 In addition, the framework allows a built-in dimensionality reduction/expansion using __adjustable convolution step__ for protein sequences and __deconvolution__ for drug sequences.
 
 ### Performance
-![](img/on_test.png?raw=true)
+
+|Method | Protein rep. |   Compound rep. |  CI | MSE |
+|-------|--------------|-----------------|-----|-----|
+| GraphDTA (Nguyen et al., 2021)  |  CNN  |  GCN |    0.805   | 0.690 | 
+| GraphDTA (Nguyen et al., 2021)  |    CNN  |  GAT_GCN |   0.808 |   0.676|  
+| GraphDTA (Nguyen et al., 2021)  |    CNN  | GAT| 0.801    |  0.829  | 
+| GraphDTA (Nguyen et al., 2021)   |   CNN |   GIN  |   0.813  |  0.648 |
+| MLT-LE  |   CNN |   CNN |   0.817  |  0.657 | 
+| MLT-LE   |   CNN |   GCN |   0.823  | 0.599  | 
+| MLT-LE   |   CNN |   GIN |   0.820  |  0.615 | 
+[Performance comparisons on BindingDB EC50 test set]
+
+|Method | Protein rep. |   Compound rep. |  CI | MSE |
+|-------|--------------|-----------------|-----|-----|
+|DeepDTA (Öztürk et al., 2018) |  Smith-Waterman  |Pubchem-Sim    | 0.790  | 0.608 |
+|DeepDTA (Öztürk et al., 2018)  | Smith-Waterman  | CNN |  0.886 |  0.420 |
+| DeepDTA (Öztürk et al., 2018) |  CNN | Pubchem-Sim    |  0.835  |  0.419 | 
+| KronRLS (Cichonska et al., 2017, 2018)  | Smith-Waterman|   Pubchem-Sim    |  0.871 |   0.379 | 
+| SimBoost (He et al., 2017)|   Smith-Waterman |  Pubchem-Sim |     0.872 |   0.282 | 
+| DeepDTA (Öztürk et al., 2018)  |  CNN  | CNN |  0.878|    0.261|  
+| WideDTA (Öztürk et al., 2019)   | CNN + PDM  |   1D + LMCS  |  0.886  |  0.262 | 
+| GraphDTA (Nguyen et al., 2021)  |  CNN  |  GCN |    0.880   | 0.254 | 
+| GraphDTA (Nguyen et al., 2021)  |    CNN  |  GAT_GCN |   0.881 |   0.245|  
+| GraphDTA (Nguyen et al., 2021)  |    CNN  | GAT|    0.892  |  0.232 | 
+| GraphDTA (Nguyen et al., 2021)   |   CNN |   GIN  |   0.893  |  0.229 | 
+| MLT-LE   |   CNN |   GIN |   0.884  |  0.235 | 
+[Performance comparisons on Davis test set]
+
+** Daivis performance table adaptated from (Nguyen et al., 2021).
 
 ## Install environment
 
