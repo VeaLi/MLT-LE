@@ -9,7 +9,7 @@ In addition, the framework allows a built-in dimensionality reduction/expansion 
 
 ### Performance
 
-:Performance comparisons on BindingDB EC50 test set:
+Performance comparisons on BindingDB EC50 test set:
 |Method | Protein rep. |   Compound rep. |  CI | MSE |
 |-------|--------------|-----------------|-----|-----|
 | GraphDTA (Nguyen et al., 2021)  |  CNN  |  GCN |    0.805   | 0.690 | 
