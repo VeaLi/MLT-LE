@@ -36,7 +36,7 @@ Performance comparisons on Davis test set
 | GraphDTA (Nguyen et al., 2021)  |    CNN  | GAT|    0.892  |  0.232 | 
 | GraphDTA (Nguyen et al., 2021)   |   CNN |   GIN  |   0.893  |  0.229 | 
 | MLT-LE   |   CNN |   GIN |   0.884  |  0.235 | 
-]
+
 
 ** Davis performance table for GraphDTA adaptated from (Nguyen et al., 2021).
 
