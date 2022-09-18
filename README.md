@@ -9,6 +9,7 @@ In addition, the framework allows a built-in dimensionality reduction/expansion 
 
 ### Performance
 
+:Performance comparisons on BindingDB EC50 test set:
 |Method | Protein rep. |   Compound rep. |  CI | MSE |
 |-------|--------------|-----------------|-----|-----|
 | GraphDTA (Nguyen et al., 2021)  |  CNN  |  GCN |    0.805   | 0.690 | 
@@ -18,8 +19,9 @@ In addition, the framework allows a built-in dimensionality reduction/expansion 
 | MLT-LE  |   CNN |   CNN |   0.817  |  0.657 | 
 | MLT-LE   |   CNN |   GCN |   0.823  | 0.599  | 
 | MLT-LE   |   CNN |   GIN |   0.820  |  0.615 | 
-[Performance comparisons on BindingDB EC50 test set]
 
+
+Performance comparisons on Davis test set
 |Method | Protein rep. |   Compound rep. |  CI | MSE |
 |-------|--------------|-----------------|-----|-----|
 |DeepDTA (Öztürk et al., 2018) |  Smith-Waterman  |Pubchem-Sim    | 0.790  | 0.608 |
@@ -34,9 +36,9 @@ In addition, the framework allows a built-in dimensionality reduction/expansion 
 | GraphDTA (Nguyen et al., 2021)  |    CNN  | GAT|    0.892  |  0.232 | 
 | GraphDTA (Nguyen et al., 2021)   |   CNN |   GIN  |   0.893  |  0.229 | 
 | MLT-LE   |   CNN |   GIN |   0.884  |  0.235 | 
-[Performance comparisons on Davis test set]
+]
 
-** Daivis performance table adaptated from (Nguyen et al., 2021).
+** Davis performance table for GraphDTA adaptated from (Nguyen et al., 2021).
 
 ## Install environment
 
