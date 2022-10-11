@@ -1,8 +1,7 @@
 import tensorflow as tf
 import numpy as np
 from keras import backend as K
-from keras.utils.layer_utils import count_params
-
+from keras.utils.layer_utils import count_params  
 
 class Model:
     """

@@ -59,7 +59,6 @@ class MapSeq:
         'laplacian': use Laplacian normalization
 
 
-
     """
 
     def __init__(self,
@@ -116,11 +115,15 @@ class MapSeq:
         for drug in tqdm(drug_seqs):
             if self.drug_mode not in graphs.GRAPHS.keys():
                 drug_len = min(len(drug), self.max_drug_len)
-                drug_vec = []
+                if len(drug) == 1:
+                    drug_vec = [self.drug_dict.get(drug, 0)]
 
-                for i in range(drug_len - self.drug_step):
-                    v = self.drug_dict.get(drug[i:i + self.drug_step], 0)
-                    drug_vec.append(v)
+                else:
+                    drug_vec = []
+
+                    for i in range(drug_len - self.drug_step):
+                        v = self.drug_dict.get(drug[i:i + self.drug_step], 0)
+                        drug_vec.append(v)
 
                 map_drug[drug] = drug_vec
 

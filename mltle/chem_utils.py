@@ -1,7 +1,6 @@
 from rdkit import Chem
 import numpy as np
 
-
 def to_non_isomeric_canonical(smiles):
     """
     Removes isomeric features and makes RDKit canonical.
@@ -24,8 +23,7 @@ def to_non_isomeric_canonical(smiles):
     """
     try:
         mol = Chem.MolFromSmiles(smiles)
-        smiles_canonical = Chem.MolToSmiles(
-            mol, isomericSmiles=False, canonical=True)
+        smiles_canonical = Chem.MolToSmiles(mol, isomericSmiles=False, canonical=True)
         return smiles_canonical
     except Exception as e:
         # if smiles is invalid return NaN

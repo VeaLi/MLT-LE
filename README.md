@@ -131,7 +131,7 @@ model = model.create_model(order=order,
 
 #### Prepare data
 
-For drug sequences, when using CNN-based models for all encodings, you can enable positional encoding or variable length encoding using the `positional = True` or `max_drug_len='inf'` options. Only variable length coding is available for protein sequences: `max_drug_len='inf'`.
+For drug sequences, when using CNN-based models for all encodings, you can enable positional encoding or variable length encoding using the `positional = True` or `max_drug_len='inf'` options. Only variable length coding is available for protein sequences: `max_protein_len='inf'`.
 
 ##### Available encodings  (SMILES)
 

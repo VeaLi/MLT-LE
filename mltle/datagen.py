@@ -164,8 +164,7 @@ class DataGen:
 
                 # positional encoding, 0 - reserved for padding
                 drug_inds = [range(10) for v in range(batch_size)]
-                drug_inds = tf.keras.preprocessing.sequence.pad_sequences(
-                    drug_inds, 10, padding='post', truncating='post')
+                drug_inds = tf.keras.preprocessing.sequence.pad_sequences(drug_inds, 10, padding='post', truncating='post')
 
                 # all columns from 3d (index=2), are treated as target variables
                 for k in range(3, len(BATCH)):

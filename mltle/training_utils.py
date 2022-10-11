@@ -1,7 +1,6 @@
 import tensorflow as tf
 import numpy as np
 from keras import backend as K
-import scikitplot as skplt
 from sklearn.metrics import mean_squared_error
 from lifelines.utils import concordance_index
 from scipy import stats
@@ -17,9 +16,9 @@ def get_scores(y_true, y_pred):
     return res
 
 
-def get_batch_size(S):
+def get_batch_size(data_size, max_batch_size = 256):
     mbs = 1
-    for i in range(1, min(128, S)):
+    for i in range(1, min(max_batch_size, data_size)):
         if S % i == 0:
             mbs = i
     assert S % mbs == 0
