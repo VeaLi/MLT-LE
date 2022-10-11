@@ -19,9 +19,9 @@ def get_scores(y_true, y_pred):
 def get_batch_size(data_size, max_batch_size = 256):
     mbs = 1
     for i in range(1, min(max_batch_size, data_size)):
-        if S % i == 0:
+        if data_size % i == 0:
             mbs = i
-    assert S % mbs == 0
+    assert data_size % mbs == 0
 
     return mbs
 
